@@ -1,9 +1,7 @@
 package org.example._4;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class _4 {
@@ -11,18 +9,18 @@ public class _4 {
     // (или любой другой…не суть)
     // Вывести на экран СТРИМОМ самую длинную строку. Если несколько одинаковых, то значит несколько.
 
-    public static void theLongestString(String[] strings) {
-        int lengthLongestStr = Arrays.stream(strings)
-                .max(Comparator.comparing(String::length))
-                .get()
-                .length();
-
-        Stream.of(strings)
-                .filter(s -> s.length() == lengthLongestStr)
+    public static void longestStrings(Stream<String> stream) {
+        AtomicInteger longestLength = new AtomicInteger(-1);
+        stream.peek(string -> {
+                    if (string.length() > longestLength.get()) {
+                        longestLength.set(string.length());
+                    }
+                }).sorted(Comparator.comparing(String::length).reversed())
+                .takeWhile(string -> string.length() == longestLength.get())
                 .forEach(System.out::println);
     }
 
     public static void main(String[] args) {
-        theLongestString(new String[]{"we", "wee", "qwer", "oooo"});
+        longestStrings(Stream.of("we", "wee", "qwer", "oooo"));
     }
 }
